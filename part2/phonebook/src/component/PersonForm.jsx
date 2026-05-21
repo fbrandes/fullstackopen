@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-const PersonForm = ({persons, setPersons}) => {
+const PersonForm = ({persons, addPerson}) => {
     const [newName, setNewName] = useState("");
     const [newPhoneNumber, setNewPhoneNumber] = useState("");
 
@@ -24,9 +24,12 @@ const PersonForm = ({persons, setPersons}) => {
             return;
         }
 
-        setPersons((persons) => [...persons, { name: newName, phoneNumber: newPhoneNumber }]);
-        setNewName("");
-        setNewPhoneNumber("")
+        const newPerson = { name: newName.trim(), number: newPhoneNumber.trim() };
+
+        addPerson(newPerson).then(() => {
+            setNewName("");
+            setNewPhoneNumber("");
+        });
     };
 
     return <>

@@ -1,10 +1,10 @@
 import Person from "./Person.jsx";
 
-export const Persons = ({persons}) => (
+export const Persons = ({persons, removePerson}) => (
     <ul>
         {persons.map((person) => (
             <li key={person.name}>
-                <Person person={person}/>
+                <Person person={person} removePerson={removePerson} />
             </li>
         ))}
     </ul>
