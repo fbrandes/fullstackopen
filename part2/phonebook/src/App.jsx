@@ -3,7 +3,7 @@ import NewPersonForm from "./component/NewPersonForm.jsx";
 import {Persons} from "./component/Persons.jsx";
 
 const App = () => {
-    const [persons, setPersons] = useState([{ name: "Arto Hellas" }])
+    const [persons, setPersons] = useState([{ name: "Arto Hellas" , phoneNumber: "040-1234567"}])
 
     const addPerson = (event) => {
         event.preventDefault();
