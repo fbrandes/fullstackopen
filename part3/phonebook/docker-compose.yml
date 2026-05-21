@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  frontend:
+    image: nginx:latest
+    container_name: frontend
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    image: node:22
+    container_name: backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: sh -c "npm install && npm start"
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://fullstack:open@mongodb:27017/phonebook?authSource=admin
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:7.0.34
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: fullstack
+      MONGO_INITDB_ROOT_PASSWORD: open
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge
