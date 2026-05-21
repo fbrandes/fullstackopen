@@ -1,7 +1,11 @@
 import {useState} from "react";
 
-const NewPersonForm = ({setPersons}) => {
+const NewPersonForm = ({persons, setPersons}) => {
     const [newName, setNewName] = useState("");
+
+    const duplicateName = () => {
+        return persons.some((person) => person.name === newName);
+    }
 
     const handleNameChange = (event) => {
         setNewName(event.target.value);
@@ -9,6 +13,12 @@ const NewPersonForm = ({setPersons}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if(duplicateName()){
+            alert(`${newName} is already added to the phonebook`);
+            return;
+        }
+
         setPersons((persons) => [...persons, { name: newName }]);
         setNewName("");
     };
