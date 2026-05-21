@@ -1,4 +1,4 @@
-const SearchFilter = ({ text, search, setSearch }) => {
+const Filter = ({ text, search, setSearch }) => {
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
     };
@@ -11,4 +11,4 @@ const SearchFilter = ({ text, search, setSearch }) => {
 );
 };
 
-export default SearchFilter;
+export default Filter;

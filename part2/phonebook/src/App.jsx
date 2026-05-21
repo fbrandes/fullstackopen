@@ -1,7 +1,7 @@
 import {useState} from 'react'
-import NewPersonForm from "./component/NewPersonForm.jsx";
+import PersonForm from "./component/PersonForm.jsx";
 import {Persons} from "./component/Persons.jsx";
-import SearchFilter from "./component/SearchFilter.jsx";
+import Filter from "./component/Filter.jsx";
 
 const App = () => {
     const [persons, setPersons] = useState([
@@ -18,8 +18,8 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <SearchFilter text="filter shown with:" search={search} setSearch={setSearch}/>
-            <NewPersonForm persons={persons} setPersons={setPersons}/>
+            <Filter text="filter shown with:" search={search} setSearch={setSearch}/>
+            <PersonForm persons={persons} setPersons={setPersons}/>
             <h2>Numbers</h2>
             <Persons persons={filterPersons}/>
         </div>

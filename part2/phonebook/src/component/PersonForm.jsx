@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-const NewPersonForm = ({persons, setPersons}) => {
+const PersonForm = ({persons, setPersons}) => {
     const [newName, setNewName] = useState("");
     const [newPhoneNumber, setNewPhoneNumber] = useState("");
 
@@ -42,4 +42,4 @@ const NewPersonForm = ({persons, setPersons}) => {
     </>;
 }
 
-export default NewPersonForm;
+export default PersonForm;
