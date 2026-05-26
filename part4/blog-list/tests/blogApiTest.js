@@ -1,58 +1,128 @@
-const {test, after, beforeEach} = require('node:test');
-const assert = require('node:assert');
-const mongoose = require('mongoose');
-const supertest = require('supertest');
-const app = require('../app');
-const api = supertest(app);
+const supertest = require('supertest')
+const app = require('../app')
+const {test, after, beforeEach} = require('node:test')
+const assert = require('node:assert')
+const {default: mongoose} = require('mongoose')
+const helper = require('./testHelper')
 
-const Blog = require('../models/blogSchema.js');
-const helper = require('./testHelper');
+const api = supertest(app)
 
 beforeEach(async () => {
-    await Blog.deleteMany({});
-    await Blog.insertMany(helper.initialBlogs);
-});
+    await helper.freshBlogsDatabase()
 
-test('all blogs are returned as json and amount is equal', async () => {
-    const response = await api
+})
+
+test('api return correct amount of blogs as json', async () => {
+    await api
         .get('/api/blogs')
         .expect(200)
-        .expect('Content-Type', /application\/json/);
+        .expect('Content-Type', /application\/json/)
 
-    assert.strictEqual(response.body.length, helper.initialBlogs.length);
-});
+    const blogs = await helper.blogsInDatabase()
+    assert.strictEqual(blogs.length, helper.initialBlogs.length)
+})
 
-test('_id is actually id', async () => {
-    const response = await api
-        .get('/api/blogs');
+test('blog json has id key not _id', async () => {
+    await api
+        .get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+    const blogs = await helper.blogsInDatabase()
+    assert.ok(blogs[0].id)
+    assert.ok(!blogs[0]._id)
 
-    assert.ok(response.body[0].id);
-    assert.strictEqual(response.body[0]._id, undefined);
-});
+})
 
-test('successful blog creation', async () => {
-    const newBlog = {
-        title: "Test Blog",
-        author: "Silas",
-        url: "https://test.com",
-        likes: 5
-    };
-
+test('api create a new blog', async () => {
     await api
         .post('/api/blogs')
-        .send(newBlog)
+        .send({
+            title: 'test api subject',
+            author: 'Robert C. Martin',
+            url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+            likes: 2
+        })
         .expect(201)
-        .expect('Content-Type', /application\/json/);
 
-    // same size after adding a new blog
-    const blogsAtEnd = await helper.blogsInDb();
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1);
 
-    // new blog inserted
-    const titles = blogsAtEnd.map(b => b.title);
-    assert.ok(titles.includes('Test Blog'));
-});
+    const blogs = await helper.blogsInDatabase()
+    const titles = blogs.map(blog => blog.title)
+    assert.strictEqual(titles.includes('test api subject'), true)
+    assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
+})
 
+test('api create a new blog with 0 like if likes is missing', async () => {
+    const response = await api
+        .post('/api/blogs')
+        .send({
+            title: 'test api subject',
+            author: 'Robert C. Martin',
+            url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+        })
+        .expect(201)
+
+    assert.strictEqual(response.body.likes, 0)
+
+})
+
+test('api does not create a new blog when title or url is missing', async () => {
+    await api
+        .post('/api/blogs')
+        .send({
+            author: 'Robert C. Martin',
+            url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+            likes: 0
+        })
+        .expect(400)
+    await api
+        .post('/api/blogs')
+        .send({
+            title: 'test api subject',
+            author: 'Robert C. Martin',
+            likes: 0
+        })
+        .expect(400)
+
+})
+
+test('delete a blog', async () => {
+    const blogs = await helper.blogsInDatabase()
+    const id = blogs[0].id
+    await api
+        .delete(`/api/blogs/${id}`)
+        .expect(204)
+
+    const updatedBlogs = await helper.blogsInDatabase()
+    const ids = updatedBlogs.map(blog => blog.id)
+    assert(!ids.includes(id))
+    assert.strictEqual(updatedBlogs.length, blogs.length - 1)
+
+})
+
+test('update a blog', async () => {
+    const blogs = await helper.blogsInDatabase()
+    const blog = blogs[0]
+    await api
+        .put(`/api/blogs/${blog.id}`)
+        .send({
+            title: 'test',
+            author: 'author',
+            likes: 10,
+            url: 'test'
+        })
+        .expect(201)
+
+    const updatedBlogs = await helper.blogsInDatabase()
+    const updatedBlog = updatedBlogs.find(b => b.id === blog.id)
+    assert.deepStrictEqual({
+        id: blog.id,
+        title: 'test',
+        author: 'author',
+        likes: 10,
+        url: 'test'
+    }, updatedBlog)
+
+})
 after(async () => {
-    await mongoose.connection.close();
-});
+    await mongoose.connection.close()
+})
