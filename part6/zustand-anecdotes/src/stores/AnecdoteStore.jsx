@@ -1,7 +1,8 @@
 import {create} from 'zustand'
 import anecdoteService from '../services/anecdotes'
+import {useShallow} from "zustand/react/shallow";
 
-const useAnecdoteStore = create((set, get) => ({
+export const useAnecdoteStore = create((set, get) => ({
     anecdotes: [],
     filter: '',
     actions: {
@@ -11,20 +12,21 @@ const useAnecdoteStore = create((set, get) => ({
                 id, {...anecdote, votes: anecdote.votes + 1})
 
             set(state => ({
-                anecdotes: state.anecdotes.map(a => a.id === id ? updated : a)
+                anecdotes: state.anecdotes.map(a => a.id === id ? updated : a).toSorted((a, b) => b.votes - a.votes)
             }))
         },
 
         add: async (anecdote) => {
             const newAnecdote = await anecdoteService.createNew(anecdote)
-            set(state => ({ anecdotes: state.anecdotes.concat(newAnecdote) }))
+            set(state => ({anecdotes: state.anecdotes.concat(newAnecdote)}))
         },
 
-        setFilter: (value) => set({ filter: value }),
+        setFilter: (value) => set({filter: value}),
 
         initialize: async () => {
             const anecdotes = await anecdoteService.getAll()
-            set(() => ({ anecdotes }))
+            anecdotes.sort((a, b) => b.votes - a.votes)
+            set(() => ({anecdotes}))
         },
 
         remove: async (id) => {
@@ -37,6 +39,14 @@ const useAnecdoteStore = create((set, get) => ({
     },
 }));
 
-export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
+
+export const useAnecdotes = () => useAnecdoteStore(
+    useShallow((state) => {
+        if (!state.filter) return state.anecdotes
+        return state.anecdotes.filter(a =>
+            a.content.toLowerCase().includes(state.filter.toLowerCase())
+        )
+    })
+)
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
 export const useFilter = () => useAnecdoteStore((state) => state.filter)
