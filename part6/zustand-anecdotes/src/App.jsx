@@ -1,19 +1,22 @@
-import {useAnecdotes} from './store'
+import {useAnecdoteActions, useAnecdotes} from './stores/AnecdoteStore.jsx'
 import AnecdoteForm from "./components/AnecdoteForm.jsx";
 import AnecdoteList from "./components/AnecdoteList.jsx";
 import Filter from "./components/Filter.jsx";
+import {useEffect} from "react";
+import Notification from "./components/Notification.jsx";
 
 const App = () => {
-    const anecdotes = useAnecdotes()
+    const { initialize } = useAnecdoteActions();
 
-    const vote = id => {
-        console.log('vote', id)
-    }
+    useEffect(() => {
+        initialize();
+    }, [initialize]);
 
     return (
         <div>
-            <Filter/>
             <h2>Anecdotes</h2>
+            <Notification/>
+            <Filter/>
             <AnecdoteList/>
             <AnecdoteForm/>
         </div>
