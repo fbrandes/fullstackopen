@@ -1,6 +1,7 @@
 import {useAnecdotes} from './store'
 import AnecdoteForm from "./components/AnecdoteForm.jsx";
 import AnecdoteList from "./components/AnecdoteList.jsx";
+import Filter from "./components/Filter.jsx";
 
 const App = () => {
     const anecdotes = useAnecdotes()
@@ -11,6 +12,7 @@ const App = () => {
 
     return (
         <div>
+            <Filter/>
             <h2>Anecdotes</h2>
             <AnecdoteList/>
             <AnecdoteForm/>
