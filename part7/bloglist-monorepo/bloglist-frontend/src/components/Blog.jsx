@@ -1,21 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import blogService from "../services/blogs";
 import { Button, Card, CardContent, Stack, Typography } from "@mui/material";
+import {useBlogs} from "./hooks/UseBlogs.jsx";
+import {useContext} from "react";
+import UserContext from "./contexts/UserContext.jsx";
 
-const Blog = ({ blog, blogs, setBlogs, user, handleLike }) => {
+const Blog = ({ blog }) => {
   const navigate = useNavigate();
+  const { remove, likeBlog } = useBlogs();
+  const { user, isLoggedIn } = useContext(UserContext);
 
   const handleDeletion = async (event) => {
     event.preventDefault();
 
-    try {
-      await blogService.remove(blog.id);
-      const newBlogs = blogs.filter((b) => b.id !== blog.id);
-      setBlogs(newBlogs);
-      navigate("/");
-    } catch (error) {
-      console.log(error.reponse);
-    }
+    remove(blog.id);
+    navigate("/");
   };
 
   if (!blog) {
@@ -55,13 +54,13 @@ const Blog = ({ blog, blogs, setBlogs, user, handleLike }) => {
           </Typography>
           {!user ? null : (
             <Button onClick={() => {
-              handleLike(blog);
+              likeBlog(blog.id, blog);
             }} variant="outlined">
               like
             </Button>
           )}
 
-          {!user || blog.user.username !== user.username ? (
+          {!isLoggedIn() || blog.user.username !== user.username ? (
             <></>
           ) : (
             <Button onClick={handleDeletion} variant="outlined" color="error">
