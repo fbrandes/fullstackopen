@@ -1,0 +1,13 @@
+{
+  "name": "bloglist-monorepo",
+  "version": "1.0.0",
+  "description": "Blog List Application",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build": "npm run build --prefix client",
+    "start": "NODE_ENV=production npm start --prefix server"
+  },
+  "author": "",
+  "license": "ISC"
+}
