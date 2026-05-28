@@ -31,34 +31,13 @@ const NewBlogForm = ({ handleBlogAddition }) => {
       <h2>Create new blog</h2>
       <Notification notification={notification} />
       <div>
-        <TextField
-          label="title"
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-          }}
-          style={{ marginBottom: 10 }}
-        />
+          <TextField {...title} style={{ marginBottom: 10 }} />
       </div>
       <div>
-        <TextField
-          label="author"
-          value={author}
-          onChange={(e) => {
-            setAuthor(e.target.value);
-          }}
-          style={{ marginBottom: 10 }}
-        />
+          <TextField {...author} style={{ marginBottom: 10 }} />
       </div>
       <div>
-        <TextField
-          label="url"
-          value={url}
-          onChange={(e) => {
-            setUrl(e.target.value);
-          }}
-          style={{ marginBottom: 10 }}
-        />
+          <TextField {...url} style={{ marginBottom: 10 }} />
       </div>
       <Button type="submit" variant="contained" style={{ marginTop: 10 }}>
         create

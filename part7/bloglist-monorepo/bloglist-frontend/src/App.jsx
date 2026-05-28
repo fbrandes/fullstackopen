@@ -1,8 +1,7 @@
 import {useContext, useEffect, useState} from "react";
 import {Link, Route, Routes, useMatch, useNavigate,} from "react-router-dom";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
+import blogService, {getUsers} from "./services/blogs";
 import NewBlogForm from "./components/forms/NewBlogForm";
 import Blogs from "./components/Blogs";
 import Login from "./components/Login";
@@ -12,19 +11,30 @@ import NotFound from "./components/NotFound.jsx";
 import NotificationContext from "./components/contexts/NotificationContext.jsx";
 import UserContext from "./components/contexts/UserContext.jsx";
 import {useBlogs} from "./components/hooks/UseBlogs.jsx";
+import {getUser, removeUser} from "./services/users.js";
+import Users from "./components/Users.jsx";
+import UserInfo from "./components/UserInfo.jsx";
 
 const App = () => {
-    const { blogs, isPending, create } = useBlogs();
-    const [user, setUser] = useContext(UserContext);
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [notification, setNotification] = useContext(NotificationContext);
-    const navigate = useNavigate();
+    const {blogs, isPending, create} = useBlogs();
+    const {notification} = useContext(NotificationContext);
 
+
+    const {setUser, isLoggedIn} = useContext(UserContext);
+    const navigate = useNavigate();
     const match = useMatch("/blogs/:id");
+    const userMatch = useMatch("/users/:id");
+
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        const loggedUser = window.localStorage.getItem("loggedUser");
+        getUsers().then((data) => {
+            setUsers(data);
+        });
+    }, []);
+
+    useEffect(() => {
+        const loggedUser = getUser()
         if (loggedUser) {
             const user = JSON.parse(loggedUser);
             setUser(user);
@@ -42,31 +52,12 @@ const App = () => {
 
     const sortedBlogs = blogs.toSorted((a, b) => b.likes - a.likes);
     const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
-
-
-    const handleLogin = async (event) => {
-        event.preventDefault();
-
-        try {
-            const user = await loginService.login({username, password});
-            window.localStorage.setItem("loggedUser", JSON.stringify(user));
-            blogService.setToken(user.token);
-
-            setUser(user);
-            setUsername("");
-            setPassword("");
-
-            setNotification("You have successfully logged in!", 3000);
-            navigate("/");
-        } catch (error) {
-            setNotification(error.response.data.error, 3000);
-        }
-    };
+    const singleUser = userMatch ? users.find((user) => user.id === userMatch.params.id) : null;
 
     const handleLogout = (event) => {
         event.preventDefault();
 
-        window.localStorage.removeItem("loggedUser");
+        removeUser();
         setUser({});
 
         navigate("/");
@@ -95,6 +86,13 @@ const App = () => {
                         {!isLoggedIn() ? (
                             <></>
                         ) : (
+                            <Button color="inherit" component={Link} to="/users">
+                                <Typography>users</Typography>
+                            </Button>
+                        )}
+                        {!isLoggedIn() ? (
+                            <></>
+                        ) : (
                             <Button color="inherit" component={Link} to="/create">
                                 <Typography>new blog</Typography>
                             </Button>
@@ -112,34 +110,26 @@ const App = () => {
                 </Toolbar>
             </AppBar>
             <ErrorBoundary fallback={
-                <Box style={{ marginTop: 10 }}>
+                <Box style={{marginTop: 10}}>
                     <Typography variant="h5">Something went wrong</Typography>
                 </Box>
             }>
                 <Routes>
-                    <Route path="*" element={<NotFound />} />
+                    <Route path="*" element={<NotFound/>}/>
                     <Route
                         path="/"
                         element={
                             <Blogs notification={notification} sortedBlogs={sortedBlogs}/>
                         }
                     />
-                    <Route path="/blogs/:id" element={<Blog blog={blog} />} />
+                    <Route path="/users" element={<Users users={users}/>}/>
+                    <Route path="/blogs/:id" element={<Blog blog={blog}/>}/>
+                    <Route path="/users/:id" element={<UserInfo user={singleUser}/>}/>
                     <Route
                         path="/create"
-                        element={<NewBlogForm handleBlogAddition={handleBlogAddition} />}
+                        element={<NewBlogForm handleBlogAddition={handleBlogAddition}/>}
                     />
-                    <Route
-                        path="/login"
-                        element={
-                            <Login
-                                handleLogin={handleLogin}
-                                password={password}
-                                setPassword={setPassword}
-                                setUsername={setUsername}
-                            />
-                        }
-                    />
+                    <Route path="/login" element={<Login/>}/>
                 </Routes>
             </ErrorBoundary>
         </Container>

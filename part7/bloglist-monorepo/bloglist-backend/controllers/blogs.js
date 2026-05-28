@@ -98,4 +98,31 @@ blogRouter.delete("/:id", async (request, response) => {
   response.status(204).end();
 });
 
+blogRouter.post("/:id/comments", async (request, response) => {
+  let data = request.body;
+
+  const user = await User.findById(request.user.id);
+  const blog = await Blog.findById(request.params.id);
+
+  if (!user) {
+    return response.status(400).json({ error: "userId missing or not valid" });
+  }
+
+  if (!data.comment) {
+    return response.status(400).json({ error: "comment is missing" });
+  }
+
+  const comment = new Comment({ ...data });
+  const result = await comment.save();
+
+  blog.comments = blog.comments.concat(comment._id);
+  await blog.save();
+
+  response.status(201).json({
+    comment: result.comment,
+    id: result.id,
+    blogId: blog._id,
+  });
+});
+
 module.exports = blogRouter;
