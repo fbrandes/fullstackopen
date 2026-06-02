@@ -1,0 +1,30 @@
+name: Test Chapter 4
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Install backend dependencies
+        run: cd library-backend && npm install
+      
+      - name: Install test dependencies
+        run: cd tests-chapter4 && npm install
+      
+      - name: Run tests
+        run: cd tests-chapter4 && npm test
+        env:
+          NODE_ENV: test
+          JWT_TOKEN_SECRET: test-secret
