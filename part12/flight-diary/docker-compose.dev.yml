@@ -1,0 +1,31 @@
+services:
+  app:
+    image: flight-diary-frontend-dev
+    build:
+      context: ./flight-diary-frontend
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./flight-diary-frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    container_name: flight-diary-frontend-dev
+
+  server:
+    image: flight-diary-backend-dev
+    build:
+      context: ./flight-diary-backend
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./flight-diary-backend:/usr/src/app
+      - /usr/src/app/node_modules
+    container_name: flight-diary-backend-dev
+
+  nginx:
+    image: nginx:1.25-alpine
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"
+    container_name: flight-reverse-proxy-dev
+    depends_on:
+      - app
+      - server

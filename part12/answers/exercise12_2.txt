@@ -1,0 +1,24 @@
+Script started on Wed Nov 12 17:29:26 2025
+[1m[7m%[27m[1m[0m                                                                                       [0m[27m[24m[Jdardangerguri@Dardans-MacBook-Pro script-answers % [K[?2004h
+[7mdardangerguri@Dardans-MacBook-Pro script-answers %[27m[K[?2004l
+[1m[7m%[27m[1m[0m                                                                                       [0m[27m[24m[Jdardangerguri@Dardans-MacBook-Pro script-answers % [K[?2004h[7mdocker run -it ubuntu bash[27m[26D[27md[27mo[27mc[27mk[27me[27mr[27m [27mr[27mu[27mn[27m [27m-[27mi[27mt[27m [27mu[27mb[27mu[27mn[27mt[27mu[27m [27mb[27ma[27ms[27mh[?2004l
+[?2004h]0;root@df2b586a2b23: /root@df2b586a2b23:/# ls
+[?2004l[0m[01;36mbin[0m   [01;34mdev[0m  [01;34mhome[0m  [01;34mmedia[0m  [01;34mopt[0m   [01;34mroot[0m  [01;36msbin[0m  [01;34msys[0m  [01;34musr[0m
+[01;34mboot[0m  [01;34metc[0m  [01;36mlib[0m   [01;34mmnt[0m    [01;34mproc[0m  [01;34mrun[0m   [01;34msrv[0m   [30;42mtmp[0m  [01;34mvar[0m
+[?2004h]0;root@df2b586a2b23: /root@df2b586a2b23:/# pwd
+[?2004l/
+[?2004h]0;root@df2b586a2b23: /root@df2b586a2b23:/# ls usr/
+bin/     games/   include/ lib/     libexec/ local/   sbin/    share/   src/
+]0;root@df2b586a2b23: /root@df2b586a2b23:/# ls usr/
+bin/     games/   include/ lib/     libexec/ local/   sbin/    share/   src/
+]0;root@df2b586a2b23: /root@df2b586a2b23:/# ls usr/src ap   /app              mkdir -p usr.    /usr/srx c/app
+[?2004l[?2004h]0;root@df2b586a2b23: /root@df2b586a2b23:/# [7mtouch /usr/src/app/index.js[27mtouch /usr/src/app/index.js
+[?2004l[?2004h]0;root@df2b586a2b23: /root@df2b586a2b23:/# [Kcar   t intd  e s   /usr/src/app/index.js  
+[?2004l[?2004h]0;root@df2b586a2b23: /root@df2b586a2b23:/# [Kecho hello >         ""h"e"l"l"o" "w"o"r"l"d"" > [7m/usr/src/app/index.js[27m/usr/src/app/index.js
+[?2004l[?2004h]0;root@df2b586a2b23: /root@df2b586a2b23:/# [Kecho "hello world" > /usr/src/app/index.js[17Pcat /usr/src/app/index.js
+[?2004lhello world
+[?2004h]0;root@df2b586a2b23: /root@df2b586a2b23:/# exit
+[?2004lexit
+[1m[7m%[27m[1m[0m                                                                                       [0m[27m[24m[Jdardangerguri@Dardans-MacBook-Pro script-answers % [K[?2004heexit[?2004l
+
+Script done on Wed Nov 12 17:32:15 2025

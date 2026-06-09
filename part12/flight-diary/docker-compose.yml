@@ -1,0 +1,25 @@
+services:
+  app:
+    image: flight-diary-frontend
+    build:
+      context: ./flight-diary-frontend
+      dockerfile: Dockerfile
+    container_name: flight-diary-frontend
+
+  server:
+    image: flight-diary-backend
+    build:
+      context: ./flight-diary-backend
+      dockerfile: Dockerfile
+    container_name: flight-diary-backend
+
+  nginx:
+    image: nginx:1.25-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"
+    container_name: flight-reverse-proxy
+    depends_on:
+      - app
+      - server
